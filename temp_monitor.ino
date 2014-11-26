@@ -1,6 +1,7 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include "temperature.h"
+#include "temp_sensor.h"
 // Data wire is plugged into pin 3 on the Arduino
 #define ONE_WIRE_BUS 3
 #define FLASH_PIN 5
@@ -14,7 +15,7 @@ DallasTemperature tempSensors(&oneWire);
 
 
 
-
+//uint8_t dd = {0x28, 0xFF, 0x98, 0x55, 0x73, 0x04, 0x00, 0xA8};
 DeviceAddress tempSensor1Address =  {0x28, 0xFF, 0x98, 0x55, 0x73, 0x04, 0x00, 0xA8};
 DeviceAddress tempSensor2Address = {0x28, 0xFF, 0xF6, 0x56, 0x77, 0x04, 0x00, 0x0D};
 
@@ -22,6 +23,7 @@ DeviceAddress tempSensor2Address = {0x28, 0xFF, 0xF6, 0x56, 0x77, 0x04, 0x00, 0x
 DallasTemperature sensors(&oneWire);
 void setup(void)
 {
+
   // start serial port
   Serial.begin(9600);
   // Start up the library
@@ -52,19 +54,28 @@ void loop(void)
   delay(250);
   Serial.print("Getting temperatures...\n\r");
   sensors.requestTemperatures();
-  
-  Serial.print("Inside temperature is: ");
+  print_temperatures();
+  String g = "the tempomb";
+  TempSensor t(&tempSensor1Address,g );
+  t.report();
+  if(false){
+    buzz();
+    flash();
+  }
+}
+
+void print_temperatures(){
+  Serial.print("Temp Sensor 1 is: ");
   printTemperature(tempSensor1Address);
   Serial.print("\n\r");
-  Serial.print("Outside temperature is: ");
+  Serial.print("Temp Sensor 2 is: ");
   printTemperature(tempSensor2Address);
   Serial.print("\n\r\n\r");
-  buzz();
-  flash();
+
 }
 
 void buzz(){
-  int buzz_duration = 500;
+  int buzz_duration = 10;
   tone(6,1000,buzz_duration);
   delay(buzz_duration);
 
